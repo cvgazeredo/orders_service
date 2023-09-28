@@ -14,9 +14,12 @@ app = OpenAPI(__name__, info=info)
 app.run(debug=True)
 
 # Tags for documentation
-home_tag = Tag(name="Documentation - Order Microservice", description="Select doc: Swagger, Redoc")
+home_tag = Tag(name="Documentation - Order Microservice", description="Select doc: Swagger, Redoc ou RapiDoc")
 order_tag = Tag(name="Orders", description="Details of orders")
 order_transactions_tag = Tag(name="Order - Transactions", description="Buy and Sell")
+
+
+USER_SERVICE_URL = "http://authentication:8000"
 
 
 @app.get("/", tags=[home_tag])
@@ -113,7 +116,7 @@ def create_order(form: CreateOrderSchema, ):
 
     # Access Stock Service
     try:
-        req = requests.get("http://127.0.0.1:5001/stock", params={"symbol": form.stock_symbol})
+        req = requests.get("http://stocks-service:5001/stock", params={"symbol": form.stock_symbol})
         if req.status_code == 404:
             return {"error": "Stock information not available"}
 
@@ -169,7 +172,7 @@ def sell_stock(form: SellStockSchema):
 
     # Check the current price of stock
     try:
-        req = requests.get("http://127.0.0.1:5001/stock", params={"symbol": form.stock_symbol})
+        req = requests.get("http://stocks-service:5001/stock", params={"symbol": form.stock_symbol})
         if req.status_code == 404:
             return {"error": "Stock information not available"}, 404
 
